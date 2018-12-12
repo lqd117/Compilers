@@ -1,3 +1,4 @@
+import time
 # 输入产生式
 print("请输入产生式数量以及产生式")
 production_num = int(input())  # 产生式数目
@@ -102,11 +103,12 @@ def cal(arr):  # 生成状态中所有的产生式
         for item1 in point_list:  # 遍历每个产生式
             if item1[0] == char:  # 如果找到符合条件的产生式
                 temp_look_ahead = cal_first(production[id + 1:], look_ahead)  # 首先计算出该产生式的展望符
+                look_ahead.sort()
                 # 这时候应该查看该产生式有没有已经在状态中出现
                 temp_flag = 1  # 1代表没有出现，0代表出现
                 for i in range(0, arr.__len__()):
-                    temp_id = arr[i].index('|')
-                    temp1_production, temp1_look_ahead = arr[i][0:temp_id], arr[i][temp_id + 1:]
+                    temp1_id = arr[i].index('|')
+                    temp1_production, temp1_look_ahead = arr[i][0:temp1_id], arr[i][temp1_id + 1:]
                     if temp1_production == [item1[0], "."] + item1[1:]:  # 如果出现了就合并展望集
                         temp1_look_ahead = list(set(temp1_look_ahead).union(set(temp_look_ahead)))
                         temp_flag = 0
@@ -120,13 +122,11 @@ def cal(arr):  # 生成状态中所有的产生式
                 arr.append([item1[0], "."] + item1[1:] + ['|'] + temp_look_ahead)
     arr.sort()
     return arr
-
-
 table = {}  # 用来存放状态边表
 for arr in DFA_list:  # 遍历每个状态的产生式
     i = DFA_list.index(arr)  # 找到每个状态的下标
     table[i] = []  # 初始化每个状态的边表
-    cal(arr)  # 补全该状态中的产生式
+    arr = cal(arr)  # 补全该状态中的产生式
     # 对这个状态建边
     vis = {}  # 用来储存点后面相同的产生式
     # 首先对点后面所有相同的产生式归类并移动
@@ -167,6 +167,86 @@ for arr in DFA_list:  # 遍历每个状态的产生式
             table[i].append((item, DFA_list.__len__()))
             DFA_list.append(temp)
 
+final_flag = 1  # 判断该文法是不是能用LR(1)分析
+
+#上面已经得到先前LR(1)中的NFA了，这时候需要对NFA进行同心项合并
+#合并的时候需要注意判断“规约-规约”冲突，并需要改变NFA边表
+fa = [] #首先初始化映射数组并映射到自己
+for i in range(DFA_list.__len__()):
+    fa.append(i)
+vis = [0 for _ in range(DFA_list.__len__())] # 标记有哪些状态经过合并后被废弃 1 表示被废弃
+
+for i in range(DFA_list.__len__()):# 判断当前状态是否是后面的同心项
+    if vis[i] == 1: # 如果当前状态已经被废弃说明当前状态已经被合并，不在考虑
+        continue
+    all_same = [DFA_list[i]] # 存放可以合并的同心项
+    all_same_id = [i] # 存放可以合并的同心项id
+    temp = [] #存放当前状态所有的产生式并排序，方便比较
+    for item in DFA_list[i]:# 遍历当前状态每个产生式
+        temp_id = item.index('|')
+        temp.append(item[0:temp_id]) # 添加当前产生式
+    temp.sort() # 排序方便比较
+    for j in range(i+1,DFA_list.__len__()):
+        temp_j = [] #存放当前状态所有产生式，同上
+        for item in DFA_list[j]:
+            temp_id = item.index('|')
+            temp_j.append(item[0:temp_id])
+        temp_j.sort()
+        if temp == temp_j: # 如果相等说明状态i找到了同心项
+            all_same.append(DFA_list[j])
+            all_same_id.append(j)
+    if all_same.__len__() == 1: #说明状态i没有找到可以合并的同心项
+        continue
+    # 这时候说明有同心项可以合并，首先需要将后面的状态作废，并且改变映射
+    for j in range(1,all_same_id.__len__()): # 这里不包括开头注意
+        vis[all_same_id[j]] = 1
+        fa[all_same_id[j]] = i
+    # 然后需要合并展望符，以第一个为蓝本
+    for item in all_same[0]: # 遍历每一个产生式,注意修改的时候需要先找到item的id
+        temp_id = item.index('|')
+        temp_production,look_ahead = item[0:temp_id] , item[temp_id + 1:]
+        # 然后从其余的状态中寻找可以合并的展望符
+        for j in range(1,all_same.__len__()): # 这里也不包括开头
+            for item1 in all_same[j]: # 遍历每个产生式
+                temp1_id = item1.index('|')
+                temp1_production,temp_look_ahead = item1[0:temp1_id] , item1[temp1_id + 1:]
+                if temp_production == temp1_production: # 这时候说明可以有展望符合并
+                    look_ahead = list(set(look_ahead).union(set(temp_look_ahead))) # 使用list合并
+        # 最后更新
+        look_ahead.sort()
+        all_same[0][all_same[0].index(item)] = temp_production + ['|'] + look_ahead
+    # 最后需要判断是否出现了“规约-规约”冲突
+    temp = [] # 用来存需要规约的产生式的展望符
+    for item in all_same[0]: # 遍历已经更新好的状态
+        temp_id = item.index('|')
+        if item[0:temp_id][-1] != '.' and item[0:temp_id][-1] != 'ε': # 说明该产生式不需要规约
+            continue
+        temp.append(item[temp_id+1:])
+    for x in range(temp.__len__()):
+        for y in range(x+1,temp.__len__()):
+            if list(set(temp[x]).difference(set(temp[y]))) != []:# 如果不为空说明产生了“规约-规约”冲突,该文法不能用LALR(1)法分析
+                final_flag = 0
+# 这里需要对DFA_list 更新
+temp = DFA_list
+DFA_list = []
+new_fa = {}
+for i in range(temp.__len__()):
+    if vis[i] == 1: #这时说明该状态被废弃
+        new_fa[i] = new_fa[fa[i]]
+        continue
+    new_fa[i] = DFA_list.__len__()
+    DFA_list.append(temp[i])
+
+# 这里需要对DFA边表table更新
+temp = table
+table = {}
+for item in temp:
+    table[new_fa[item]] = []
+    for x in temp[item]:
+        table[new_fa[item]].append((x[0],new_fa[x[1]]))
+
+
+
 # 输出每个状态的产生式
 for i in range(DFA_list.__len__()):
     print("该状态编号为{id}".format(id=i))
@@ -185,10 +265,9 @@ for i in range(point_list.__len__()):
     print(str(i).rjust(len(str(point_list.__len__()))), end='')
     print("  " + point_list[i][0] + "->" + "".join(point_list[i][1:]))
 
-final_flag = 1  # 判断该文法是不是能用LR(1)分析
 
-# 求LR(1)分析表
-print("LR(1)分析表")
+# 求LALR(1)分析表
+print("LALR(1)分析表")
 len = 2
 for item in arr_T:
     len = max(len, item.__len__())
@@ -260,7 +339,7 @@ for item in arr:
         print(x.rjust(len + 2), end='')
     print()
 if final_flag == 0:
-    print("这个文法其实不能用LR(1)文法分析，分析表是错的")
+    print("这个文法其实不能用LALR(1)文法分析，分析表是错的")
 
 # 测试字符串
 
@@ -360,4 +439,9 @@ c d c d
 S -> a A d | b B d | a B e | b A e
 A -> c
 B -> c
+
+3
+S -> L = R | R
+L -> * R | i
+R -> L
 '''
