@@ -88,3 +88,52 @@ button6.place(x=1110,y=0)
 
 root.mainloop()
 
+'''
+5
+exp -> exp addop term | term
+addop -> + | -
+term -> term mulop factor | factor
+mulop -> *
+factor -> ( exp ) | number
+( number + number - number ) * number
+
+9
+expr -> expr addop term
+expr -> term
+addop -> +
+addop -> -
+term -> term mulop factor
+term -> factor
+mulop -> *
+factor -> ( expr )
+factor -> number
+
+5
+E -> T E'
+E' -> + T E' | ε
+T -> F T'
+T' -> * F T' | ε
+F -> ( E ) | i
+
+Expr -> Expr Addop Term | Term
+Addop -> + | -
+Term -> Term Mulop Factor | Factor
+Mulop -> *
+Factor -> ( Expr ) | number
+number + number
+
+
+A -> B a | A a | c
+B -> B b | A b | d
+d a
+
+A -> a b | a c
+a c
+
+A -> a b c d | a b a c
+B -> c d | c d a
+a b a c
+
+S -> ( S ) S | ε
+( ) ( )
+'''

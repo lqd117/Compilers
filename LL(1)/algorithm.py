@@ -2,7 +2,7 @@ from functools import reduce
 import data
 def work():
     # 输入产生式
-    dict = {}  # 储存每个终结符所对应的产生式
+    dict = {}  # 储存每个非终结符所对应的产生式
     for i in data.array:
         array = i.split()
         if (dict.get(array[0], 0) == 0):
@@ -53,7 +53,7 @@ def work():
                 if (dict[id][x][0] == dict[id][x - 1][0]):
                     cnt += 1
                 else:
-                    if (cnt != 1):
+                    if cnt != 1 and arrN.count(dict[id][x-1][0]):
                         flag, l, r = 1, x - cnt, x
                         temp = dict[id][l:r]
                         for y in temp: dict[id].remove(y)
@@ -62,7 +62,7 @@ def work():
                         dict[id + str(tot)] = [item for item in dict[id + str(tot)] if len(item) != 2 or item.pop(0)]
                         tot += 1
                         break
-            if (flag == 0 and cnt != 1):
+            if flag == 0 and cnt != 1 and arrN.count(dict[id][len(dict[id]) - cnt]):
                 flag, l = 1, len(dict[id]) - cnt
                 temp = dict[id][l:]
                 for y in temp: dict[id].remove(y)
