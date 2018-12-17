@@ -90,11 +90,11 @@ for arr in DFA_list:
             # 没有出现则新加入list中
             table[i].append((item, DFA_list.__len__()))
             DFA_list.append(temp)
-flag = 1  # 用来记录该文法是不是能用LR(0)
+final_flag = 1  # 用来记录该文法是不是能用LR(0)
 for i in range(0, DFA_list.__len__()):
     for x in DFA_list[i]:
         if (x[-1] == '.' or x[-1] == 'ε') and DFA_list[i].__len__() != 1:
-            flag = 0
+            final_flag = 0
 
 # 实在是不想写UI了
 # 输出每个状态的产生式
@@ -178,7 +178,7 @@ for item in arr:
     for x in item:
         print(x.rjust(len + 2), end='')
     print()
-if flag == 0:
+if final_flag == 0:
     print("这个文法其实不能用LR(0)文法分析，分析表是错的")
 # 测试字符串
 print('请输入待测字符串')
@@ -224,6 +224,19 @@ for item in result:
     print(item[1].rjust(length + 2), end='')
     print("".rjust(length + 2), end='')
     print(item[2].ljust(length + 2))
+
+
+'''
+1
+S -> ( S ) S | ε
+( ( ) )
+
+3
+S -> D b B
+D -> d | ε
+B -> a | B b a | ε
+b a b a
+'''
 
 '''
 1

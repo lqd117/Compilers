@@ -88,6 +88,38 @@ button6.place(x=1110,y=0)
 
 root.mainloop()
 
+
+'''
+S -> ( S ) S | ε
+( ( ) )
+
+S -> D b B
+D -> d | ε
+B -> a | B b a | ε
+b a b a
+'''
+
+
+'''
+消除左递归
+A -> A a | b
+ 
+A -> B a | A a | c
+B -> B b | A b | d
+
+S -> S + S | S S | ( S ) | S * | a
+
+
+first,follow
+S -> a S b S | b S a S | ε
+
+L -> T
+T -> F + F
+F -> b L a | i | ε
+
+'''
+
+
 '''
 5
 exp -> exp addop term | term

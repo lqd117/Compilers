@@ -36,7 +36,7 @@ for item in production_data:  # 将产生式存入
 
 # 计算first集合
 dict_first = {}  # 记录每个符号的first集合
-dict_first['ε'] = ['ε']  # 可能这个有点用?
+dict_first['ε'] = ['ε']  # 这个是为了在计算字符串first集合时方便处理
 # 加入终结符的first集合，终结符的first集合就是其本身
 for x in arr_T:
     dict_first[x] = [x]

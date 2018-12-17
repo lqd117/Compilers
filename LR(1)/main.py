@@ -35,7 +35,7 @@ for item in production_data:  # 将产生式存入
 
 # 计算first集合
 dict_first = {}  # 记录每个符号的first集合
-dict_first['ε'] = ['ε']  # 可能这个有点用?
+dict_first['ε'] = ['ε']  # 这个是为了在计算字符串的first集合时有用
 # 加入终结符的first集合，终结符的first集合就是其本身
 for x in arr_T:
     dict_first[x] = [x]
@@ -249,6 +249,7 @@ for i in range(DFA_list.__len__()):  # 遍历每个状态
         for j in range(1, arr[-1].__len__()):
             if look_ahead.count(arr[0][j]):  # 如果可以填
                 if arr[-1][j] != '-' and arr[-1][j] != 'acc':  # 产生冲突，这时候说明该文法不能用LR(1)方法分析
+                    print(arr[-1][j],arr.__len__())
                     final_flag = 0
                 if arr[-1][j] == '-':
                     arr[-1][j] = 'r' + str(id)  # 加入分析表中
@@ -306,6 +307,38 @@ for item in result:
     print(item[1].rjust(length + 2), end='')
     print("".rjust(length // 2), end='')
     print(item[2].ljust(length + 2))
+
+
+'''
+6.1
+2
+S -> S + a T | a T | + a T
+T -> + a T | + a
+
+6.2
+S -> A a A b | B b B a
+A -> ε
+B -> ε
+
+6.3
+S -> A
+A -> A b | b B a
+B -> a A c | a | a A b
+
+7.1
+S -> E
+E -> T | T + E
+T -> ε
+
+7.2
+S -> A a | b A c | d c | b d a
+A -> d
+
+7.3
+S -> A a | b A c | B c | b B a
+A -> d
+B -> d
+'''
 
 '''
 1

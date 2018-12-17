@@ -37,7 +37,7 @@ for item in production_data:
 
 # 计算first集合
 dict_first = {}  # 记录每个符号的first集合
-dict_first['ε'] = ['ε']  # 这个待定
+dict_first['ε'] = ['ε']  # 这个是为了在计算字符串的first集合时方便
 # 加入终结符的first集合 ，终结符的first集合就是其本身
 for x in arr_T:
     dict_first[x] = [x]
@@ -304,6 +304,20 @@ for item in result:
     print(item[1].rjust(length + 2), end='')
     print("".rjust(length // 2), end='')
     print(item[2].ljust(length + 2))
+
+
+'''
+1
+S -> ( S ) S | ε
+( ( ) )
+
+3
+S -> D b B
+D -> d | ε
+B -> a | B b a | ε
+b a b a
+'''
+
 
 '''
 1

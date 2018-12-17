@@ -111,3 +111,11 @@ button8.grid(row = 2,column = 21,columnspan = 3,sticky = W)
 
 root.mainloop()
 
+
+'''
+(a*|b*)b(ba)*
+(a*|b*)*a*b*
+a(a|c)b|b(ab|bc)(ba|c)
+((a*)*|(b|a)*)cd*
+'''
+
