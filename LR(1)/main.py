@@ -71,7 +71,7 @@ for x in dict_first:
     print(string_first)
 
 
-# 生成NFA
+# 生成DFA
 def cal_first(lst, other):  # 求某一后缀的first集合
     lst.pop(0)
     if lst.__len__() == 0:
@@ -316,6 +316,7 @@ S -> S + a T | a T | + a T
 T -> + a T | + a
 
 6.2
+3
 S -> A a A b | B b B a
 A -> ε
 B -> ε

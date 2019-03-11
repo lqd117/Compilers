@@ -72,7 +72,7 @@ for x in dict_first:
     print(string_first)
 
 
-# 生成NFA
+# 生成DFA
 def cal_first(lst, other):  # 求某一后缀的first集合
     lst.pop(0)
     if lst.__len__() == 0:
@@ -169,8 +169,8 @@ for arr in DFA_list:  # 遍历每个状态的产生式
 
 final_flag = 1  # 判断该文法是不是能用LR(1)分析
 
-#上面已经得到先前LR(1)中的NFA了，这时候需要对NFA进行同心项合并
-#合并的时候需要注意判断“规约-规约”冲突，并需要改变NFA边表
+#上面已经得到先前LR(1)中的DFA了，这时候需要对DFA进行同心项合并
+#合并的时候需要注意判断“规约-规约”冲突，并需要改变DFA边表
 fa = [] #首先初始化映射数组并映射到自己
 for i in range(DFA_list.__len__()):
     fa.append(i)

@@ -114,7 +114,7 @@ for x in dict_follow:
     string_follow = "Follow(" + x + ")" + ' = ' + '{ ' + ' , '.join(dict_follow[x]) + ' }'
     print(string_follow)
 
-# 生成NFA
+# 生成DFA
 def cal(arr):  # 生成状态中所有的产生式
     for item in arr:
         # 处理item这个产生式

@@ -168,4 +168,11 @@ a b a c
 
 S -> ( S ) S | ε
 ( ) ( )
+
+A -> B C c | g D B
+B -> b C D E | ε
+C -> D a B | c a
+D -> d D | ε
+E -> g A f | c
+g d b c a c
 '''
